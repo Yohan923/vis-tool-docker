@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { Uploader } from "./components/uploader";
+import { TOOLS } from "./consts/app";
+import { Visualizer } from "./components/visualizer";
+import { getConfigs } from "./utils/requestHandlers"
+
 
 function App() {
+
+  const [loaded, setLoaded] = useState();
+  const [configs, setConfigs] = useState({});
+  const [selectedTool, setTool] =  useState('');
+  const [graphData, setData] =  useState('digraph{}');
+
+
+  useEffect(function(){
+    getConfigs(setConfigs)
+  }, [loaded])
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Uploader graphData={graphData} setData={setData} configs={configs}></Uploader>
+      <Visualizer graphData={graphData} setData={setData}></Visualizer>
     </div>
   );
 }

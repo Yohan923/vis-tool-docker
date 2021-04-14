@@ -1,19 +1,19 @@
 services:
     client:
-        image: webapp-client
+        image: client
         restart: always
         ports:
-            - "3000:3000"
+            - "192.168.0.110:3000:3000"
         volumes:
             - ./client:/client
             - /client/node_modules
         links:
             - server
     server:
-        image: webapp-server
+        image: server
         restart: always
         ports:
-            - "9000:9000"
+            - "192.168.0.110:9000:9000"
         volumes:
             - ./server:/server
             - /server/node_modules

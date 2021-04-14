@@ -1,0 +1,57 @@
+{
+    "default": "pifra",
+    "tools": [
+        {
+            "name": "pifra",
+            "exampleFiles": ["fresh.pi", "gen-fresh-a.pi"],
+            "executablePath": "/go/bin/pifra",
+            "parameters": {
+                "input": {
+                    "type": "positional",
+                    "position": 0,
+                    "flag": null
+                },
+                "output": {
+                    "type": "flaggedInput",
+                    "position": "",
+                    "flag": "-o"
+                },
+                "public": [
+                    {
+                        "name": "maxStates",
+                        "label": "Max number of states",
+                        "default": 20,
+                        "presets": [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70],
+                        "info": "maximum number of states explored (default 20)",
+                        "dataType": "integer",
+                        "allowUserInput": true,
+                        "type": "flaggedInput",
+                        "flag": "-n",
+                        "position": null,
+                        "required": false,
+                        "max": null,
+                        "min": null,
+                        "blacklist": null,
+                        "regex": null
+                    },
+                    {
+                        "name": "maxRegisters",
+                        "label": "Max number of registers",
+                        "default": 0,
+                        "presets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        "info": "maximum number of registers (default is unlimited)",
+                        "dataType": "integer",
+                        "allowUserInput": true,
+                        "type": "flaggedInput",
+                        "flag": "-r",
+                        "position": null,
+                        "required": true
+                    }
+                ],
+                "private": [
+
+                ]
+            } 
+        }
+    ]
+}

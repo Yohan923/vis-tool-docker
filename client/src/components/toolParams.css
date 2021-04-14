@@ -1,0 +1,18 @@
+.ParamLabel {
+    white-space: pre-wrap;
+    text-align: left;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.Param {
+    display: grid;
+    grid: max-content / 60% 40%;
+
+}
+
+.ParamInput {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+

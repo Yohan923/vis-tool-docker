@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:8.11.4
+FROM mhart/alpine-node:latest
 WORKDIR /client
 COPY package*.json /client/
 RUN npm install
