@@ -5,6 +5,7 @@ import Dropdown from 'react-dropdown';
 import Popup from 'reactjs-popup';
 import 'react-dropdown/style.css';
 import './uploader.css';
+import { Button, Alert } from 'react-bootstrap';
 
 
 export function Uploader(props) {
@@ -13,7 +14,6 @@ export function Uploader(props) {
 
     const [inputData, setInputData] = useState('');
 
-    const [selectedTool, setSelectedTool] = useState('')
     const [selectedExample, setSelectedExample] = useState('')
 
     const [toolParams, setToolParams] = useState({})
@@ -27,7 +27,6 @@ export function Uploader(props) {
         for (var e in props.configs) {
             if (e == 'default') {
                 console.log(props.configs[props.configs[e]])
-                setSelectedTool(props.configs[e])
                 setToolParams(props.configs[props.configs[e]].parameters)
             } else {
                 tmpTools.push(e)
@@ -36,17 +35,16 @@ export function Uploader(props) {
         setTools(tmpTools)
     }, [props.configs])
 
-
-    const changeTool = function(selection) {
-        setSelectedTool(selection.value);
-        setToolParams(props.configs[selection.value].parameters)
+    useEffect(function(){
+        setToolParams(props.configs[props.selectedTool].parameters)
         setInputData('')
         setSelectedExample('')
-    }
+    }, [props.selectedTool])
+
 
     const changeExample = function(selection) {
         setSelectedExample(selection.value)
-        getExample(selectedTool, selection.value, setInputData);
+        getExample(props.selectedTool, selection.value, setInputData);
     }
 
     const renderInputBox = function(type) {
@@ -58,18 +56,22 @@ export function Uploader(props) {
     const gatherParams = function(tool) {
         var params = {}
 
+        var unsetRequiredParams = []
         for (var p in props.configs[tool].parameters.required) {
             console.log(document.getElementById(p))
             var e = document.getElementsByName(p)
             console.log(e)
             if (e.length) {
                 if (!e[0].value) {
-                    setErrorMessage('Required parameter ' + props.configs[tool].parameters.required[p].label + ' is not set')
-                    setAlertError(true)
-                    return null
+                    unsetRequiredParams.push('- ' + props.configs[tool].parameters.required[p].label)
                 }
                 params[p] = e[0].value
             }
+        }
+
+        if (unsetRequiredParams.length > 0) {
+            setErrorMessage('Required parameter \n' + unsetRequiredParams.join('\n') + '\nis not set')
+            setAlertError(true)
         }
 
         for (var p in props.configs[tool].parameters.optional) {
@@ -84,34 +86,54 @@ export function Uploader(props) {
     }
 
 
+    const hasErrors = function() {
+        if (!inputData) {
+            setAlertError(true)
+            setErrorMessage('Please input some source or select from examples')
+        }
+
+    }
+
+
     const onExecute = function() {
-        var params = gatherParams(selectedTool)
+
+        if (hasErrors()) return
+
+        var params = gatherParams(props.selectedTool)
 
         if (params === null) return
 
-        uploadTextToServer(selectedTool, inputData, params, props.setData)
+        uploadTextToServer(props.selectedTool, inputData, params, props.setData)
+    }
+
+    const renderExecuteButton = () => {
+
+        if (alertError) {
+            return (
+              <Alert variant="warning" onClose={() => setAlertError(false)} dismissible>
+                <Alert.Heading>Oops</Alert.Heading>
+                <p style={{"white-space":"pre"}}>
+                    {errorMessage}
+                </p>
+              </Alert>
+            );
+          }
+
+        return <Button variant="outline-dark" onClick={onExecute}>Execute</Button>
     }
 
 
     return (
         <div className={'Uploader'}>
-            <Dropdown options={tools} onChange={changeTool} value={props.configs.default}/>
             <ToolParams toolParams={toolParams}></ToolParams>
-            <button className={'UploadButton'} onClick={onExecute}>Execute</button>
+            {renderExecuteButton()}
             <Dropdown 
-                options={props.configs[selectedTool]? props.configs[selectedTool].exampleFiles : []} 
+                options={props.configs[props.selectedTool]? props.configs[props.selectedTool].exampleFiles : []} 
                 value={selectedExample} 
                 onChange={changeExample} 
                 placeholder='select an example'
             />
             {renderInputBox()}
-            <Popup open={alertError} closeOnDocumentClick onClose={e => setAlertError(false)}>
-                        <div className="modal">
-                        <a className="close" onClick={e => setAlertError(false)}>
-                        </a>
-                        {errorMessage}
-                        </div>
-            </Popup>
         </div>
     );
 }

@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { changeStrokeWidth, changePathColour, fillNode } from '../utils/utils';
 import { PathsList } from "./pathsList";
 import './visualizer.css'
+import { Col, Container, Row, Table } from 'react-bootstrap';
 
 var fromDot = require('ngraph.fromdot');
 
@@ -55,12 +56,10 @@ function findAllPathBetween(g, a, b, visited, prevPath, paths) {
 
 export function Visualizer(props) {
     const id = _uniqueId('graph')
-    const [nodeNotSelectedMessage, setNodeNotSelectedMessage] = useState('');
 
     const [showEdgeLabel, setShowEdgeLabel] = useState(false);
     const [showNodeLabel, setShowNodeLabel] = useState(false);
     const [graphDrawn, setGraphDrawn] = useState();
-    const [alertNodeNotSelected, setAlertNodeNotSelected] = useState(false);
 
     const [graph, setGraph] = useState();
 
@@ -81,16 +80,6 @@ export function Visualizer(props) {
 
 
     function handleFindAllPathBetween(g, sourceNode, dstNode) {
-
-        if (!sourceNode) {
-            setNodeNotSelectedMessage('source node not selected, left click on a node to select source node')
-            setAlertNodeNotSelected(true)
-            return
-        }else if (!dstNode) {
-            setNodeNotSelectedMessage('destination node not selected, ctrl+left click on a node to select destination node')
-            setAlertNodeNotSelected(true)
-            return
-        }
 
         var paths = {}
         findAllPathBetween(g, sourceNode.__data__.key, dstNode.__data__.key, {}, [], paths)
@@ -118,6 +107,7 @@ export function Visualizer(props) {
         d3.select("#" + id)
         .graphviz()
         .zoom(true)
+        .zoomScaleExtent([0.1, 1000])
         .transition(() => d3.transition().duration(1000))
         .attributer(function(d) {
             if (d.tag == "ellipse") {
@@ -161,7 +151,7 @@ export function Visualizer(props) {
 
         graph.selectAll(".node")
         .on('click', function(d){
-            if (d3.event.ctrlKey) {
+            if (d3.event.shiftKey) {
                 fillNode(dstNode, 'transparent')
                 setDstNode(this == dstNode? null : this)
             } else {
@@ -234,46 +224,51 @@ export function Visualizer(props) {
 
         var componentDataArray = Object.keys(selectedComponentData).map((key) => [key, selectedComponentData[key]]);
 
-        return componentDataArray.map((d) => {
-            return (
-                <tr >
-                    <td>{d[0]}</td>
-                    <td>{typeof d[1] === 'string'? d[1].replaceAll('\\n', '\n') : d[1]}</td>
-                </tr>
-            );
-            })
+        return (
+            <Table responsive>
+                <tbody>
+                    {componentDataArray.map((d) => {
+                        return (
+                            <tr >
+                                <td>{d[0]}</td>
+                                <td>{typeof d[1] === 'string'? d[1].replaceAll('\\n', '\n') : d[1]}</td>
+                            </tr>
+                        );
+                        })
+                    }
+                </tbody>
+            </Table>
+        )
     }
     
 
     return(
-        <div className={'Visualizer'}>
-            <div className={'Graph'}>
-                <div className={'InfoTableContainer'}>
-                    <table className={'InfoTable'}>
-                        {renderComponentData(selectedComponent)}
-                    </table>
-                </div>
-                <div className={'GraphOptions'}>
-                    <button onClick={e => handleFindAllPathBetween(graph, sourceNode, dstNode)}>Find All Path</button>
-                    <button onClick={e => setShowEdgeLabel(!showEdgeLabel)}> Show Edge Label</button>
-                    <button onClick={e => setShowNodeLabel(!showNodeLabel)}> Show Node Label</button>
-                    <Popup open={alertNodeNotSelected} closeOnDocumentClick onClose={e => setAlertNodeNotSelected(false)}>
-                        <div className="modal">
-                        <a className="close" onClick={e => setAlertNodeNotSelected(false)}>
-                        </a>
-                        {nodeNotSelectedMessage}
+            <Container fluid>
+                <Row>
+                    <Col id={'graph'} xs={8}>
+                        <div className={'Graph'}>
+                            <div >
+                                {sourceNode && dstNode? <button onClick={e => handleFindAllPathBetween(graph, sourceNode, dstNode)}>Find All Path</button> : ''}
+                            </div>
+                            <div className={'Canvas'} id={id}/>
                         </div>
-                    </Popup>
-                </div>
-                <div style={{width: '100%', display: 'flex', justifyContent: 'space-around' }}>
-                    <text>{'Source node: ' + (sourceNode? sourceNode.__data__.key : '')}</text>
-                    <text>{'Destination node: ' + (dstNode? dstNode.__data__.key : '')}</text>
-                </div>
-                <div className={'Canvas'} id={id}/>
-            </div>
-            <div className={'PathsListContainer'}>
-                <PathsList graphId={id} paths={pathBetweenNodes}></PathsList>
-            </div>
-        </div>
+                    </Col>
+                    <Col id={'graphInfo'}>
+                        <div className={'InfoTableContainer'}>
+                            <div style={{paddingLeft:10, fontWeight: 'bold'}}>
+                                Component info:
+                            </div>
+                            {selectedComponent? renderComponentData(selectedComponent) : (<div style={{paddingLeft:10}}>Left click on a node or edge to display its info</div>)}
+                        </div>
+                        <div className={'GraphOptions'}>
+                            <button onClick={e => setShowEdgeLabel(!showEdgeLabel)}> { !showEdgeLabel? 'Show Edge Label':'Hide Edge Label'}</button>
+                            <button onClick={e => setShowNodeLabel(!showNodeLabel)}> { !showNodeLabel? 'Show Node Label':'Hide Node Label'}</button>
+                        </div>
+                        <div className={'PathsListContainer'}>
+                            <PathsList graphId={id} paths={pathBetweenNodes}></PathsList>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
     )
 }

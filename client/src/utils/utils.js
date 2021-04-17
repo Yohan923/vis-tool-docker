@@ -21,11 +21,21 @@ export function changePathColour(graphId, p, colour) {
     }
 }
 
-export function fillNode(node, colour){
+export function fillNode(node, colour) {
     d3.select(node)
     .select('ellipse')
     .attr('fill', function(d){
         d.attributes.fill = colour
         return colour
     })
+}
+
+export function isEmptyObject(obj) {
+    for (var k in obj) {
+        if (k) {
+            return false
+        }
+        return true
+    }
+    return true
 }

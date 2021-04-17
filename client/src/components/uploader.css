@@ -1,14 +1,13 @@
 .Uploader {
-    border-right-style: solid;
     overflow: auto;
-    padding: 5%;
-
+    height: 100%;
     display: flex;
     flex-direction: column;
+    border-style: groove;
 }
 
 .Uploader .inputBox {
-    height: 70%;
+    height: 100%;
     text-align: start;
     white-space: nowrap;
     resize: none;
@@ -18,8 +17,4 @@
     margin-top: 2%;
     display: grid;
     grid: auto / 50% 50%;
-}
-
-.UploadButton {
-    margin-bottom: 1%;
 }

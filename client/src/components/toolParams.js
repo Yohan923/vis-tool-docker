@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import Collapsible from 'react-collapsible';
-import CreatableSelect from 'react-select/creatable';
 import Popup from 'reactjs-popup';
 import _uniqueId from 'lodash/uniqueId';
-import Select from 'react-select';
+import { isEmptyObject } from '../utils/utils';
 
 import { ParamSelection } from './paramSelection'
 
 import './toolParams.css'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 
 const parsePresets = function(presets) {
@@ -31,26 +31,37 @@ export function ToolParams(props) {
                 />
     }
 
-    const renderParams = function(params) {
+    const renderParams = function(params, trigger) {
         if (!params) return []
-        return Object.keys(params).map((p) => {
-            return (
-                <div className={'Param'}>
-                    <label className={'ParamLabel'}>
-                        {params[p].label}
-                    </label>
-                    {renderSelections(p, params[p])}
-                </div>
-            )
-        })
+        console.log(params)
+        return (
+            <Collapsible overflowWhenOpen={'visible'} trigger={trigger}>
+                {Object.keys(params).map((p) => {
+                    return (
+                        <div className={'Param'}>
+                            <OverlayTrigger
+                                placement={'bottom'}
+                                overlay={
+                                    <Tooltip>
+                                        {params[p].info}
+                                    </Tooltip>
+                                }
+                            >
+                                <label className={'ParamLabel'}>{params[p].label}</label>
+                            </OverlayTrigger>
+                            {renderSelections(p, params[p])}
+                        </div>
+                    )})
+                }
+            </Collapsible>
+        )
+
     }
   
     return (
         <div className={'ToolParams'}>
-            {renderParams(props.toolParams.required)}
-            <Collapsible overflowWhenOpen={'visible'} trigger={'Optional Parameters'}>
-                {renderParams(props.toolParams.optional)}
-            </Collapsible>
+            {props.toolParams.required && !isEmptyObject(props.toolParams.required)? renderParams(props.toolParams.required, 'Required Parameters') : ''}
+            {props.toolParams.optional && !isEmptyObject(props.toolParams.optional)? renderParams(props.toolParams.optional, 'Optional Parameters') : ''}
         </div>
     );
   }

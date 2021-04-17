@@ -1,6 +1,10 @@
 .App {
-  display: grid;
-  grid: 100vmin / 30% 70%;
+  padding-top: 1%;
+}
+
+#graphBox {
+  margin: auto;
+  text-align: center;
 }
 
 .popup-content {
@@ -23,4 +27,12 @@
 }
 [data-popup='tooltip'].popup-overlay {
   background: transparent;
+}
+
+.container-fluid .row {
+  height: 90vmin;
+}
+
+p {
+  white-space: pre-wrap;
 }

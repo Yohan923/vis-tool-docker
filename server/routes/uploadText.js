@@ -32,7 +32,7 @@ router.post('/tool/:toolName', upload.none(), function(req, res, next) {
                 console.log('exec error: ' + error);
             }
             fs.readFile(resultPath, 'utf8', function(err, data){ 
-       
+                if (!data) return
                 var d = data.replace(/⊢[\r\n ]*/g, '⊢\\n')
                 console.log(d)
                 res.send(processDot(d))

@@ -35,12 +35,12 @@
     position: relative;
     border: 1px solid white;
     padding: 10px;
-    background: #00ac9d;
+    background: #708685;
     color: white; 
 }
 .Collapsible__trigger:after {
       font-family: 'FontAwesome';
-      content: '\f107';
+      content: '\1401';
       position: absolute;
       right: 10px;
       top: 10px;

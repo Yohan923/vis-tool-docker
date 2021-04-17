@@ -3,8 +3,10 @@
     "tools": [
         {
             "name": "pifra",
-            "exampleFiles": ["fresh.pi", "gen-fresh-a.pi"],
+            "exampleFiles": [],
             "executablePath": "/go/bin/pifra",
+            "tutorial": true,
+            "homepage": "https://github.com/sengleung/pifra",
             "parameters": {
                 "input": {
                     "type": "positional",
@@ -39,13 +41,13 @@
                         "label": "Max number of registers",
                         "default": 0,
                         "presets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                        "info": "maximum number of registers (default is unlimited)",
+                        "info": "maximum number of registers (default (0) is unlimited)",
                         "dataType": "integer",
                         "allowUserInput": true,
                         "type": "flaggedInput",
                         "flag": "-r",
                         "position": null,
-                        "required": true
+                        "required": false
                     }
                 ],
                 "private": [

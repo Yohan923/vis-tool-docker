@@ -1,4 +1,39 @@
 var toolsConfig = require('../toolsConfig.json')
+const fs = require('fs');
+var path = require('path');
+
+
+function getExampleFileNames(toolName, exampleFiles) {
+    fileNames = []
+
+    if (exampleFiles.length) {
+        for (var fn of exampleFiles) {
+            fileNames.push(fn)
+        }
+    } else {
+        fs.readdirSync(path.join(process.cwd(), './tools/', toolName, 'examples')).forEach(file => {
+            fileNames.push(file)
+        })
+    }
+
+    return fileNames
+}
+
+
+function getTutorial(toolName, tutorial) {
+    if (!tutorial){
+        return 'No extra info'
+    }
+
+    if (typeof tutorial == 'boolean') {
+        const data = fs.readFileSync(path.join(process.cwd(), './tools/', toolName, 'tutorial.md'), {encoding:'utf8', flag:'r'})
+        return data
+    } else if (typeof tutorial == 'string'){
+        return tutorial
+    }
+
+    return 'No extra info'
+}
 
 
 function getUIConfigs() {
@@ -7,10 +42,12 @@ function getUIConfigs() {
 
     for (var tool of toolsConfig.tools) {
         uiConfigs[tool.name] = {}
-        uiConfigs[tool.name]['exampleFiles'] = tool.exampleFiles? tool.exampleFiles : []
+        uiConfigs[tool.name]['exampleFiles'] = getExampleFileNames(tool.name, tool.exampleFiles)
         uiConfigs[tool.name]['parameters'] = {}
         uiConfigs[tool.name]['parameters']['required'] = {}
         uiConfigs[tool.name]['parameters']['optional'] = {}
+        uiConfigs[tool.name]['tutorial'] = getTutorial(tool.name, tool.tutorial)
+        uiConfigs[tool.name]['homepage'] = tool.homepage || ''
 
         if (tool.parameters.public) {
             for (var param of tool.parameters.public) {

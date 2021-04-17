@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import _uniqueId from 'lodash/uniqueId';
 import * as d3 from "d3";
 import * as d3Graphviz from 'd3-graphviz';
+import './subgraph.css'
 
 var createGraph = require('ngraph.graph');
 var toDot = require('./todot')
@@ -37,6 +38,6 @@ export function Subgraph(props) {
 
 
     return(
-        <div id={id}></div>
+        <div className={'Subgraph'} id={id}></div>
     )
 }

@@ -3,5 +3,10 @@ WORKDIR /client
 COPY package*.json /client/
 RUN npm install
 COPY . /client/
-EXPOSE 3000
-CMD ["npm", "start"]
+# Build for production.
+RUN npm run build
+
+# Install `serve` to run the application.
+RUN npm install -g serve
+EXPOSE 5000
+CMD ["serve", "-s", "build"]
